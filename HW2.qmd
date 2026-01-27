@@ -33,7 +33,7 @@ library(janitor)
 
  # Filter for only US states
  nri_2 <- nri_df %>% 
-   filter(state_name != c("Puerto Rico", "Guam", "Virgin Islands", "Northern Mariana Islands", "American Samoa")) %>% 
+   filter(!state_name %in% c("Puerto Rico", "Guam", "Virgin Islands", "Northern Mariana Islands", "American Samoa", "District of Columbia")) %>% 
   # Group by state 
    group_by(state_name) %>% 
    # Count the total number of counties
@@ -42,6 +42,7 @@ library(janitor)
              high_risk_counties = sum(national_risk_index_state_percentile_composite > 84.32, na.rm = TRUE), 
              # Find the proportion of high risk in each county 
              prop_high_risk_counties = high_risk_counties/total_counties) %>% 
+  mutate(ca_true_false = state_name == "California")
  
  # group by county 
  
@@ -55,11 +56,33 @@ library(janitor)
 ```
 
 ```{r}
+
 nri_2 %>% 
-ggplot(aes(x = state_name, y = prop_high_risk_counties)) +
+  # Get the top 15 high risk states 
+  slice_max(prop_high_risk_counties, n = 15) %>% 
+  # Reorder state by proportion
+ggplot(aes(x = reorder(state_name, prop_high_risk_counties), 
+             y = prop_high_risk_counties)) +
   geom_col() +
+  # Highlight California 
+  gghighlight::gghighlight(state_name == "California") +
   coord_flip()
+
 ```
+
+
+```{r}
+nri_2 %>%
+  # Get the top 15 high risk states 
+  slice_max(prop_high_risk_counties, n = 15) %>%
+  ggplot(aes(x = prop_high_risk_counties, 
+             y = reorder(state_name, prop_high_risk_counties),
+             color = ca_true_false)) +
+  geom_linerange(aes(xmin = 0, xmax = prop_high_risk_counties)) + 
+  geom_point(size = 3) +
+  theme_minimal()
+```
+
 
  
  identify / jot down your variables of interest and consider which data types they are
