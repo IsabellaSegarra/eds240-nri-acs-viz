@@ -1,11 +1,17 @@
 ---
-title: "HW2: Visualizing FEMA NRI Data"
+title: "Visualizing FEMA NRI Data"
+subtitle: "EDS 240 HW #2" 
+author: Isabella Segarra 
+date: "1/28/26"
 format: html
 ---
 # HW #2: Visualizing FEMA NRI Data
 
 ## Objective
-How do FEMA National Risk Index scores for counties in California compare to those in other states? 
+In this assignment, we are tasked with answering the following question with our data visualization: 
+
+*How do FEMA National Risk Index scores for counties in California compare to those in other states?*
+
 
 ```{r}
 #| label: Set-Up
@@ -31,72 +37,99 @@ library(janitor)
 ##                            wrangle nri data                         
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- # Filter for only US states
- nri_2 <- nri_df %>% 
-   filter(!state_name %in% c("Puerto Rico", "Guam", "Virgin Islands", "Northern Mariana Islands", "American Samoa", "District of Columbia")) %>% 
-  # Group by state 
-   group_by(state_name) %>% 
+ nri_2 <- nri_df %>%
+   # Filter for only US states
+   filter(!state_name %in% c(
+       "Puerto Rico",
+       "Guam",
+       "Virgin Islands",
+       "Northern Mariana Islands",
+       "American Samoa",
+       "District of Columbia"
+     )
+   ) %>%
+   # Group by state
+   group_by(state_name) %>%
    # Count the total number of counties
-   summarize(total_counties = n(), 
-             # Sum the counties considered high risk (percentile > 84.32)
-             high_risk_counties = sum(national_risk_index_state_percentile_composite > 84.32, na.rm = TRUE), 
-             # Find the proportion of high risk in each county 
-             prop_high_risk_counties = high_risk_counties/total_counties) %>% 
-  mutate(ca_true_false = state_name == "California")
+   summarize(
+     total_counties = n(),
+     # Sum the counties considered high risk (percentile > 84.32)
+     high_risk_counties = sum(
+       national_risk_index_state_percentile_composite > 84.32,
+       na.rm = TRUE # remove Nas
+     ),
+     # Find the proportion of high risk in each county
+     prop_high_risk_counties = high_risk_counties / total_counties
+   ) %>%
+   # Create boolean column for data visualizing later 
+   mutate(ca_true_false = state_name == "California")
  
- # group by county 
- 
- #  if a given county’s Risk Index percentile for a hazard type is 84.32 then its Risk Index value is greater than 84.32% of all US counties. 
- 
- # filter national_risk_index_state_percentile_composite   for those above 84.32 (if-then statement)
- 
- # risk rating (categorical)
- 
+
  
 ```
+## Build visualization
 
 ```{r}
+#|: fig-alt: "Lollipop graph of National Risk Index data depicting the top 10 states with a high proportion of counties at risk according to FEMA."
 
-nri_2 %>% 
-  # Get the top 15 high risk states 
-  slice_max(prop_high_risk_counties, n = 15) %>% 
-  # Reorder state by proportion
-ggplot(aes(x = reorder(state_name, prop_high_risk_counties), 
-             y = prop_high_risk_counties)) +
-  geom_col() +
-  # Highlight California 
-  gghighlight::gghighlight(state_name == "California") +
-  coord_flip()
-
-```
-
-
-```{r}
-nri_2 %>%
-  # Get the top 15 high risk states 
-  slice_max(prop_high_risk_counties, n = 15) %>%
+ca_prop_plot <- nri_2 %>%
+  # Get the top 10 high risk states 
+  slice_max(prop_high_risk_counties, n = 10) %>% 
+  # Pull out prop_risk just for California
+  # Plot proportion high risk 
   ggplot(aes(x = prop_high_risk_counties, 
+             # reorder y-axis (state_name) based on prop high risk (highest go first)
              y = reorder(state_name, prop_high_risk_counties),
+             # spotlight California 
              color = ca_true_false)) +
-  geom_linerange(aes(xmin = 0, xmax = prop_high_risk_counties)) + 
-  geom_point(size = 3) +
-  theme_minimal()
+  # Lolipop graph = line + point 
+  geom_linerange(aes(xmin = 0, xmax = prop_high_risk_counties), size = 1.1) + 
+  geom_point(size = 3.5) +
+  # Adjust colors for California ("TRUE") and non-California states ("FALSE")
+  scale_color_manual(values = c("FALSE" = "#4A7BA7", "TRUE" = "#bf4eb4")) +
+  # Add labels 
+  labs(title = "Proportion of High-Risk Counties: California vs. Top States", 
+       x = "Proportion of High Risk Counties", 
+       subtitle = "High-risk defined as FEMA Risk Index percentile > 84.32", 
+       caption = "Data: FEMA National Risk Index (2025 Release)") +
+  theme_minimal() +
+  # Theme adjustments 
+ theme(axis.title.y = element_blank(), # Remove y label 
+        legend.title = element_blank(), 
+        legend.position = "none", # Remove legend 
+        plot.title = element_text(hjust = 0.5, size = 15, lwd = 1.5), 
+       plot.subtitle = element_text(hjust = 0.5, size = 10)
+       
+       ) 
+
+ca_prop_plot
+
+# Save plot 
+ggsave("figures/final_plot.png")
+
+
 ```
-
-
- 
- identify / jot down your variables of interest and consider which data types they are
-use online tools like from Data to Viz to help determine appropriate graph types, given your variables
-roughly sketch out your plots by hand (see why this step matters!)
 
 ## Questions
 
 **1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?**
 
+My variables of interest were the `total_counties` (categorical), `national_risk_index_state_percentile_composite` (numeric), and `state_name`(categorical). I was interested in the `national_risk_index_state_percentile_composite` because of the background reading about FEMA's National Risk Index (NRI) where it was mentioned that a percentile of 84.32 means that the county has higher risk than 84.32% of counties nationwide. I wrangled the data to produce a variable called `prop_high_risk_counties` which is the proportion of counties within the state that are high risk. 
+
+
 **2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?**
 
+I originally began with a bar chart to represent this data, however I chose a lollipop graph because it draws your eyes to the `geom_point` where you can read the proportion values clearly. I chose to represent
+
+
 **3. Summarize your main finding in no more than two sentences.**
+This graph shows that among the top 10 states, California ranks third with 79% of the state's counties classified as high-risk by FEMA's National Risk Index.
+
 
 **4. What modifications did you make to this visualization to make it more easily readable?**
+In order to make the visualization more readable, I added a subtitle to help interpret the proportion values. In addition, I decided to highlight the California lollipop line to show that the central state is California in this analysis. I decided to create a true/false column instead of using gghighlight because I wanted to keep the other state's lines prominent for this visualization. 
+
 
 **5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.**
+I wanted to implement a way to add a an annotattion of the California proportion value that is *only* on the California line and not the rest of the states. In addition, I wanted to change the color of California in the state y axes. 
+

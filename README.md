@@ -1,2 +1,34 @@
-# eds240-nri-acs-viz
-This repository is for EDS-240 homework assignment 2. 
+# Visualizing FEMA Data 
+This repository is for analyzing FEMA National Risk Index data. FEMA (Federal Emergency Management Agency) is a government agency tasked with helping Americans navigate disasters. The National Risk Index is a tool developed by FEMA to evaluate where communities are most at risk from natural hazards and why those communities are at risk. In this analysis, I determined how National Risk Index scores compare for counties in California versus counties in other states. 
+
+
+![Final data visualization](figures/final_plot.png)
+
+## Contributor
+**Isabella Segarra** Masters student at the Bren School of Environmental Science and Management MEDS program.
+
+## Repository Structure 
+This repository contains the following structure: 
+```
+├── data
+│   └── National_Risk_Index_Counties_807384124455672111.csv
+├── eds240-nri-acs-viz.Rproj
+├── figures
+│   └── final_plot.png
+├── final_plot.png
+├── HW2.qmd 
+└── README.md
+
+```
+The `HW2.qmd` contains the code for this analysis. All data has been added to the `gitignore`. 
+
+## Data Access
+The National Risk Index v1.20 data for this analysis can be accessed through the FEMA [Resilience Analysis and Planning Tool](https://experience.arcgis.com/experience/0a317e8998534c30a9b2d3861c814d42/) (RAPT). To download the data, navigate to the RAPT site, click on the 'NRI' button, find the National Risk Index Counties layer and download as a csv file. 
+
+## References
+Federal Emergency Management Agency (FEMA), National Risk Index Dataset: National Risk Index County_National Risk Index_Rating_Composite - v1.20. Retrieved from FEMA GIS on January 25th, 2026, 10:30 am PST. This product uses the FEMA National Risk Index dataset API or downloadable datasets but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).
+
+## Acknowledgments 
+I would like to acknowledge the EDS-240 Data Visualization and Communications course instructor and co-instructor Sam Shanny-Csik and Annie Adams. 
+
+
