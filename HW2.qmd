@@ -17,6 +17,7 @@ In this assignment, we are tasked with answering the following question with our
 #| label: Set-Up
 #| output: false
 #| message: false 
+#| warning: false 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                    setup                                 ----
@@ -27,6 +28,8 @@ library(tidyverse)
 library(here)
 library(ggplot2)
 library(janitor)
+library(ARTofR)
+library(ggtext)
 
 #..........................import data...........................
  nri_df <- read_csv(here::here("data", "National_Risk_Index_Counties_807384124455672111.csv")) %>% 
@@ -70,7 +73,10 @@ library(janitor)
 ## Build visualization
 
 ```{r}
-#|: fig-alt: "Lollipop graph of National Risk Index data depicting the top 10 states with a high proportion of counties at risk according to FEMA."
+#| fig-alt: "Lollipop graph of National Risk Index data depicting the top 10 states with a high proportion of counties at risk according to FEMA."
+#| warning: false 
+
+ca_value <- nri_2$prop_high_risk_counties[5]
 
 ca_prop_plot <- nri_2 %>%
   # Get the top 10 high risk states 
@@ -85,22 +91,24 @@ ca_prop_plot <- nri_2 %>%
   # Lolipop graph = line + point 
   geom_linerange(aes(xmin = 0, xmax = prop_high_risk_counties), size = 1.1) + 
   geom_point(size = 3.5) +
+  annotate("text", x = 0.79, y = "California", label = "0.79", hjust = -0.3, size = 4)+
   # Adjust colors for California ("TRUE") and non-California states ("FALSE")
-  scale_color_manual(values = c("FALSE" = "#4A7BA7", "TRUE" = "#bf4eb4")) +
+  scale_color_manual(values = c("FALSE" = "#4A7BA7", "TRUE" = "#de6021")) +
   # Add labels 
   labs(title = "Proportion of High-Risk Counties: California vs. Top States", 
-       x = "Proportion of High Risk Counties", 
-       subtitle = "High-risk defined as FEMA Risk Index percentile > 84.32", 
-       caption = "Data: FEMA National Risk Index (2025 Release)") +
+     subtitle = "California ranks 3rd with 79% of counties classified as high-risk",
+     x = "Proportion of High Risk Counties", 
+     caption = "High-risk defined as FEMA Risk Index percentile &gt; 84.32<br>*Data: FEMA National Risk Index (2025 Release)*") +
   theme_minimal() +
   # Theme adjustments 
  theme(axis.title.y = element_blank(), # Remove y label 
         legend.title = element_blank(), 
         legend.position = "none", # Remove legend 
-        plot.title = element_text(hjust = 0.5, size = 15, lwd = 1.5), 
-       plot.subtitle = element_text(hjust = 0.5, size = 10)
-       
-       ) 
+        plot.title = element_text(hjust = 0.5, size = 15, lwd = 1.5, face = "bold"), 
+       plot.subtitle = element_text(hjust = 0.5, size = 10),
+       plot.caption = element_markdown(margin = margin(t = 15, unit = "pt")
+       )
+)
 
 ca_prop_plot
 
@@ -119,7 +127,7 @@ My variables of interest were the `total_counties` (categorical), `national_risk
 
 **2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?**
 
-I originally began with a bar chart to represent this data, however I chose a lollipop graph because it draws your eyes to the `geom_point` where you can read the proportion values clearly. I chose to represent
+I originally began with a bar chart to represent this data, however I chose a lollipop graph because it draws your eyes to the `geom_point` where you can read the proportion values clearly. I chose to represent the data because it reduces the visual clutter and summarizes the main findings clearly while showing the ranking clearly. I decided to highlight the actual proportion of California counties at risk to further highlight that California is the focus of this plot. 
 
 
 **3. Summarize your main finding in no more than two sentences.**
@@ -131,5 +139,5 @@ In order to make the visualization more readable, I added a subtitle to help int
 
 
 **5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.**
-I wanted to implement a way to add a an annotattion of the California proportion value that is *only* on the California line and not the rest of the states. In addition, I wanted to change the color of California in the state y axes. 
+I wanted to change the color of California in the state y axes and perhaps in the title. 
 
