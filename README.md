@@ -2,7 +2,7 @@
 This repository is for analyzing FEMA National Risk Index data. FEMA (Federal Emergency Management Agency) is a government agency tasked with helping Americans navigate disasters. The National Risk Index is a tool developed by FEMA to evaluate where communities are most at risk from natural hazards and why those communities are at risk. In this analysis, I determined how National Risk Index scores compare for counties in California versus counties in other states. 
 
 
-![Final data visualization](figures/final_plot.png)
+![Final data visualization](figures/final_plot.png){width=70%}
 
 ## Contributor
 **Isabella Segarra** Masters student at the Bren School of Environmental Science and Management MEDS program.

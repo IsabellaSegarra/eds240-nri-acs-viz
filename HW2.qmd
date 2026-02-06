@@ -76,8 +76,6 @@ library(ggtext)
 #| fig-alt: "Lollipop graph of National Risk Index data depicting the top 10 states with a high proportion of counties at risk according to FEMA."
 #| warning: false 
 
-ca_value <- nri_2$prop_high_risk_counties[5]
-
 ca_prop_plot <- nri_2 %>%
   # Get the top 10 high risk states 
   slice_max(prop_high_risk_counties, n = 10) %>% 
