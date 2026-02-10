@@ -1,0 +1,100 @@
+---
+title: "Visualizing ACS Data"
+subtitle: "EDS 240 HW #3" 
+author: Isabella Segarra 
+date: "2/9/26"
+format: html
+---
+# HW #3: Visualizing FEMA NRI x ACS Data
+
+## Objective 
+In this assignment, we are tasked with answering the following question with our data visualization: 
+
+*How does climate hazard risk exposure vary across racial / ethnic groups in California?*
+
+```{r}
+#| label: Set-Up
+#| output: false
+#| message: false 
+#| warning: false 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(here)
+library(ggplot2)
+library(janitor)
+library(ARTofR)
+library(ggtext)
+library(tidycensus)
+
+#..........................import data...........................
+
+# ________Import ACS data________
+
+#....Step 1a: see all available ACS variables + descriptions.....
+acs_vars <- tidycensus::load_variables(year = 2023,
+                                       dataset = "acs1")
+
+#..............Step 1b: import race & ethnicity data.............
+race_ethnicity <- tidycensus::get_acs(
+  geography = "county",
+  survey = "acs1",
+  # Define variables I may use 
+  variables = c("B01003_001", "B02001_002", "B02001_003", 
+                "B02001_004", "B02001_005", "B02001_006",
+                "B02001_007", "B02001_008", "B03002_012",
+                "B03002_002"),
+  state = "CA", 
+  year = 2023) |>
+  # join variable descriptions 
+  dplyr::left_join(acs_vars, by = dplyr::join_by(variable == name)) 
+
+#.................Step 2: write ACS data to file.................
+readr::write_csv(race_ethnicity, here::here("data", "ACS-1yr-2023-county-race-ethnicity.csv"))
+
+#..................Step 3: read in your CSV file.................
+race_ethnicity <- readr::read_csv(here::here("data", "ACS-1yr-2023-county-race-ethnicity.csv"))
+
+#________Import FEMA data_________
+nri_df <- read_csv(here::here("data", "National_Risk_Index_Counties_807384124455672111.csv")) %>% 
+   clean_names()
+
+```
+
+## Data Wrangling
+Variables of interest include: 
+- 
+
+cleaning tasks
+- string subset the name colun (remove California; new column 
+- new column called `county_name`
+- pivot longer (variable column --> 10 new columns)
+- create new column `county_pop` w/ case_when (if label == 'estimate!total')
+- create new column `race_ethnic` w/ case_when 
+  -remove "estimatetotal!" from column 
+- resulting `race_ethnicity` column should contain the following additional columns:  `county_name`, `county_pop`, `race_ethnic`, 
+
+```{r}
+#..........................Join ...........................
+
+```
+
+## Build Visualization
+```{r}
+
+```
+
+## Questions
+**1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?**
+
+**2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?**
+
+**3. Summarize your main finding in no more than two sentences.**
+
+**4. What modifications did you make to this visualization to make it more easily readable?**
+
+**5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.**
