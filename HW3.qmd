@@ -145,6 +145,7 @@ nri_race_sankey <- nri_race %>%
 ### Alluvial Diagram 
 ```{r}
 #| fig-alt: "Alluvial diagram of National Risk Index and US Census data depicting climate risk exposure for certain ethnic and racial groups across California."
+#| warning: false 
 #..........................Palette..........................
 
 risk_color_pallette <- c(
@@ -198,6 +199,7 @@ nri_race_sankey %>%
 
 ```{r}
 #| fig-alt: "Dodge bar chart of National Risk Index and US Census data depicting climate risk exposure for certain ethnic and racial groups across California."
+#| warning: false 
 
 nri_race_sankey %>%
   # Filter out NAs
@@ -223,8 +225,6 @@ nri_race_sankey %>%
        plot.subtitle = element_text(hjust = 0.5, size = 10), 
        plot.caption = element_text(margin = margin(t = 15))) # Adjust margin spacing
 
-# Save plot 
-#ggsave("figures/final_plot.png")
 
 ```
 ## Questions
