@@ -36,6 +36,8 @@ US Census Bureau (ACS) data was accessed through the the `{tidycensus}` package 
 ## References
 Federal Emergency Management Agency (FEMA), National Risk Index Dataset: National Risk Index County_National Risk Index_Rating_Composite - v1.20. Retrieved from FEMA GIS on January 25th, 2026, 10:30 am PST. This product uses the FEMA National Risk Index dataset API or downloadable datasets but is not endorsed by FEMA. The Federal Government or FEMA cannot vouch for the data or analyses derived from these data after the data have been retrieved from the Agency's website(s).
 
+
+
 ## Acknowledgments 
 I would like to acknowledge the EDS-240 Data Visualization and Communications course instructor and co-instructor Sam Shanny-Csik and Annie Adams. 
 

@@ -30,6 +30,7 @@ library(ggplot2)
 library(janitor)
 library(ARTofR)
 library(ggtext)
+library(ggalluvial)
 
 #..........................import data...........................
  nri_df <- read_csv(here::here("data", "National_Risk_Index_Counties_807384124455672111.csv")) %>% 
