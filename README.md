@@ -2,7 +2,7 @@
 This repository is for analyzing FEMA National Risk Index data alongside the US Census Bureau’s American Community Survey (ACS). FEMA (Federal Emergency Management Agency) is a government agency tasked with helping Americans navigate disasters. The National Risk Index is a tool developed by FEMA to evaluate where communities are most at risk from natural hazards and why those communities are at risk. The ACS is a annualy nationwide survey and contains data on American's social, economic, housing, and demographic data. In this analysis, I determined how National Risk Index scores compare for counties in California versus counties in other states. 
 
 
-![Final data visualization](figures/final_plot.png)
+![Final data visualization](figures/hw3_plot.png)
 
 ## Contributor
 **Isabella Segarra** Masters student at the Bren School of Environmental Science and Management MEDS program.
@@ -17,11 +17,12 @@ This repository contains the following structure:
 ├── eds240-nri-acs-viz.Rproj
 ├── figures
 │   └── final_plot.png
-├── final_plot.png
+│   └── hw3_plot.png
 ├── HW2.qmd
 ├── HW3.qmd
 ├── outputs
 │   └── HW2_files
+│   └── HW3_files
 └── README.md
 
 ```

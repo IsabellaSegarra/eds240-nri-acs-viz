@@ -34,6 +34,7 @@ library(ggtext)
 library(tidycensus)
 library(janitor)
 library(ggalluvial)
+library(showtext)
 #..........................import data...........................
 
 # ________Import ACS data________
@@ -64,6 +65,9 @@ race_ethnicity <- readr::read_csv(here::here("data", "ACS-1yr-2023-county-race-e
 #________Import FEMA data_________
 nri_df <- read_csv(here::here("data", "National_Risk_Index_Counties_807384124455672111.csv")) %>% 
    clean_names()
+
+#.....Import fonts......
+font_add_google("Hanken Grotesk", "hanken")
 
 ```
 
@@ -189,7 +193,7 @@ nri_race_sankey %>%
   # Theme adjustments 
   theme_minimal() +
   theme(aspect.ratio = 1, 
-        plot.title = element_text(hjust = 0.5, size = 15, lwd = 1.5, face = "bold"), 
+        plot.title = element_text(font = "hanken", hjust = 0.5, size = 15, lwd = 1.5, face = "bold"), 
        plot.subtitle = element_text(hjust = 0.5, size = 10), 
         plot.caption = element_text(hjust = 1)) 
 
@@ -198,35 +202,73 @@ nri_race_sankey %>%
 ### Dodge Bar Chart
 
 ```{r}
-#| fig-alt: "Dodge bar chart of National Risk Index and US Census data depicting climate risk exposure for certain ethnic and racial groups across California."
+#| fig-alt: "Dodge bar chart of National Risk Index and US Census data depicting climate risk exposure for certain ethnic and racial groups across California. Data reveals that majority of groups face severe climate risk exposure in California."
 #| warning: false 
 
-nri_race_sankey %>%
+# reorder columns by "Very High" risk 
+race_order <- nri_race_sankey %>%
+  filter(!is.na(race_ethnicity), national_risk_index_rating_composite == "Very High") %>%
+  arrange(pct_in_risk_category) %>%
+  pull(race_ethnicity) %>%
+  as.character()
+
+dodge_bar_chart <- nri_race_sankey %>%
   # Filter out NAs
   filter(!is.na(race_ethnicity), !is.na(national_risk_index_rating_composite)) %>%
   # Plot 
-  ggplot(aes(x = reorder(race_ethnicity,pct_in_risk_category),
-             y = pct_in_risk_category,
+  ggplot(aes(x = factor(race_ethnicity, levels = race_order), y = pct_in_risk_category,
              fill = national_risk_index_rating_composite)) +
   geom_col(position = "dodge") +
   scale_fill_manual(values = risk_color_pallette) +
-  # FLip x and y 
+  # Flip x and y 
   coord_flip() +
   labs(fill = "FEMA Risk Index",
        y = "% Population in Risk Category",
        x = "Race/ethnicity",
        title = "Climate Risk Exposure by Race and Ethnicity in California",
-       subtitle = "Majority of Groups Face Severe Climate Risk Exposure", 
+       subtitle = "Majority of groups face severe climate risk exposure", 
        caption = "Data: FEMA National Risk Index (2023 Release)\nand US Census Bureau Community Survey (ACS)") +
   # Theme adjustments 
     theme_minimal() +
   theme(axis.title.y = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 15, lwd = 1.5, face = "bold"), 
-       plot.subtitle = element_text(hjust = 0.5, size = 10), 
-       plot.caption = element_text(margin = margin(t = 15))) # Adjust margin spacing
+        axis.title.x = element_text(family = "hanken"),
+        axis.text.x = element_text(family = "hanken"),
+        axis.text.y = element_text(family = "hanken"),
+        legend.title = element_text(family = "hanken"),
+        plot.title = element_text(family = "hanken", hjust = 0.5, size = 15, lwd = 1.5, face = "bold", margin = margin(b = 10)), 
+       plot.subtitle = element_text(family = "hanken", hjust = 0.5, size = 10), 
+       plot.caption = element_text(family = "hanken", margin = margin(t = 15)), # Adjust margin spacing
+       panel.grid.minor = element_blank()) 
 
+# Enable show text
+showtext_auto(enable = TRUE)
+
+# View plot
+dodge_bar_chart
 
 ```
+```{r}
+#..............enable {showtext} for newly opened GD.............
+showtext_auto(enable = TRUE)
+
+#...................set resolution to match GD...................
+showtext_opts(dpi = 300)
+
+#..............write plot to file (aka save as png)..............
+ggsave(
+  filename = here::here("figures", "hw3_plot.png"),
+  plot = dodge_bar_chart,
+  device = "png",
+  width = 8, 
+  height = 7,
+  unit = "in",
+  dpi = 300
+)
+
+#...............turn off {showtext} text rendering...............
+showtext_auto(enable = FALSE)
+```
+
 ## Questions
 **1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?**
 
